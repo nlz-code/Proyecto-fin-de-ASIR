@@ -1,8 +1,8 @@
 <?php
 session_start();
-if(isset($_SESSION['usuario'])){
-   header('Location: principal.php');
-   exit;
+if (isset($_SESSION['usuario'])) {
+    header('Location: principal.php');
+    exit;
 }
 ?>
 <!doctype html>
@@ -14,7 +14,7 @@ if(isset($_SESSION['usuario'])){
     <meta name="description" content="">
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Hugo 0.104.2">
-    <title>Acceso</title>
+    <title>Tarifas de Transporte</title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/sign-in/">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
@@ -29,6 +29,20 @@ if(isset($_SESSION['usuario'])){
     <meta name="theme-color" content="#712cf9">
 
     <style>
+        body {
+            background-image: url('taxi.jpg');
+            font-family: Arial, sans-serif;
+            background-image: url('taxi.jpg');
+            color: #000000ff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+
+        }
+
         .bd-placeholder-img {
             font-size: 1.125rem;
             text-anchor: middle;
@@ -99,23 +113,22 @@ if(isset($_SESSION['usuario'])){
             <?php endif; ?>
 
             <div class="form-floating">
-                <input name="email" class="form-control" id="floatingInput" placeholder="email">
-                <label for="floatingInput">email</label>
+                <input name="Gmail" class="form-control" id="floatingInput" placeholder="Gmail">
+                <label for="floatingInput">Gmail</label>
             </div>
             <div class="form-floating">
-                <input name="password" type="password" class="form-control" id="floatingPassword" placeholder="Password">
-                <label for="floatingPassword">Password</label>
+                <input name="Contraseña" type="password" class="form-control" id="floatingPassword" placeholder="Contraseña">
+                <label for="floatingPassword">Contraseña</label>
             </div>
 
             <button class="w-100 btn btn-lg btn-primary" type="submit">Acceder</button>
             <p class="mt-5 mb-3 text-muted">&copy; <?php echo date('Y') ?></p>
         </form>
+        <p>¿No tienes cuenta? <a href="../proyecto/usuarios/index.php">Regístrate</a></p>
     </main>
-
-
 </body>
 
 </html>
 <?php
-    unset($_SESSION['error']);
+unset($_SESSION['error']);
 ?>

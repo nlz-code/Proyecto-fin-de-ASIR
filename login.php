@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $db=db_open();
 
-    $res=db_query($db, "SELECT * FROM usuarios WHERE email=?", [$_POST['email']]);
+    $res=db_query($db, "SELECT * FROM usuarios WHERE Gmail=?", [$_POST['Gmail']]);
 
     if($res===false){
         $_SESSION['error']="Se ha producido un error";
@@ -19,12 +19,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if(count($res)==1)
     {
         $usuario=$res[0];
-        if($usuario['password']==$_POST['password']){
+        if($usuario['Contraseña']==$_POST['Contraseña']){
             $_SESSION['usuario']=$usuario;
-            header('Location: alumnos/index.php');
+            header('Location: principal/index.php');
             exit;
         }else{
-            $_SESSION['error']="El password es incorrecto";
+            $_SESSION['error']="La contraseña es incorrecta";
             header('Location: index.php');
         }
 
