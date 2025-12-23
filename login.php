@@ -1,35 +1,26 @@
 <?php
-require_once('config.php');
-require_once('db_pdo.php');
-
 session_start();
+require_once 'db_pdo.php';
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+$gmail = $_POST['gmail'] ?? '';
+$clave = $_POST['clave'] ?? '';
 
-    $db=db_open();
+try {
+    $stmt = $pdo->prepare("SELECT * FROM usuario WHERE gmail = :gmail AND clave = :clave");
+    $stmt->execute([':gmail' => $gmail, ':clave' => $clave]);
+    $usuario = $stmt->fetch();
 
-    $res=db_query($db, "SELECT * FROM usuarios WHERE Gmail=?", [$_POST['Gmail']]);
-
-    if($res===false){
-        $_SESSION['error']="Se ha producido un error";
+    if ($usuario) {
+        $_SESSION['usuario'] = $usuario['nombre'];
+        header('Location: principal/index.html');
+        exit;
+    } else {
+        $_SESSION['error'] = 'Credenciales incorrectas';
         header('Location: index.php');
         exit;
     }
-
-    if(count($res)==1)
-    {
-        $usuario=$res[0];
-        if($usuario['Contraseña']==$_POST['Contraseña']){
-            $_SESSION['usuario']=$usuario;
-            header('Location: principal/index.php');
-            exit;
-        }else{
-            $_SESSION['error']="La contraseña es incorrecta";
-            header('Location: index.php');
-        }
-
-    }else{
-        $_SESSION['error']="El usuario no existe";
-        header('Location: index.php');
-    }    
+} catch (PDOException $e) {
+    $_SESSION['error'] = 'Error en la conexión';
+    header('Location: index.php');
+    exit;
 }
