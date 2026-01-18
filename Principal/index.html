@@ -72,10 +72,27 @@
       margin: 10px 0;
       border-radius: 5px;
       font-size: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     .result span {
       font-weight: bold;
+    }
+
+    .result a {
+      background-color: #3498db;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 3px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .result a:hover {
+      background-color: #2980b9;
     }
 
     button {
@@ -104,10 +121,10 @@
     <h1>Calculadora de Tarifas de Transporte</h1>
 
     <label for="km">¿Cuántos kilómetros quieres recorrer?</label>
-    <input type="number" id="km" placeholder="Introduce los kilómetros" required>
+    <input type="number" id="km" placeholder="Introduce los kilómetros" min="0.01" required>
 
     <label for="min">¿Cuántos minutos dura el viaje?</label>
-    <input type="number" id="min" placeholder="Introduce los minutos" required>
+    <input type="number" id="min" placeholder="Introduce los minutos" min="1" required>
 
     <button onclick="calcularTarifas()">Calcular Tarifas</button>
 
@@ -135,14 +152,14 @@
       let taxiAeroDia = km > 12 ? (km * (0.68 * 2) + 6) : null;
       let taxiAeroNoche = km > 12 ? (km * (0.8 * 2) + 6) : null;
 
-      res.innerHTML += `<div class="result"><span>Uber:</span> ${uber.toFixed(2)} €</div>`;
-      res.innerHTML += `<div class="result"><span>Cabify:</span> ${cabify.toFixed(2)} €</div>`;
-      res.innerHTML += `<div class="result"><span>Bolt:</span> ${bolt.toFixed(2)} €</div>`;
-      res.innerHTML += `<div class="result"><span>Taxi (día y entre semana):</span> ${taxiDia.toFixed(2)} €</div>`;
-      res.innerHTML += `<div class="result"><span>Taxi (noche, fines y festivos):</span> ${taxiNoche.toFixed(2)} €</div>`;
+      res.innerHTML += `<div class="result"><span>Uber: ${uber.toFixed(2)} €</span> <a href="https://www.uber.com/es/" target="_blank">Reservar</a></div>`;
+      res.innerHTML += `<div class="result"><span>Cabify: ${cabify.toFixed(2)} €</span> <a href="https://cabify.com/es" target="_blank">Reservar</a></div>`;
+      res.innerHTML += `<div class="result"><span>Bolt: ${bolt.toFixed(2)} €</span> <a href="https://bolt.eu/es/" target="_blank">Reservar</a></div>`;
+      res.innerHTML += `<div class="result"><span>Taxi (día y entre semana): ${taxiDia.toFixed(2)} €</span></div>`;
+      res.innerHTML += `<div class="result"><span>Taxi (noche, fines y festivos): ${taxiNoche.toFixed(2)} €</span></div>`;
       if (taxiAeroDia !== null) {
-        res.innerHTML += `<div class="result"><span>Taxi desde aeropuerto (día):</span> ${taxiAeroDia.toFixed(2)} €</div>`;
-        res.innerHTML += `<div class="result"><span>Taxi desde aeropuerto (noche, fines y festivos):</span> ${taxiAeroNoche.toFixed(2)} €</div>`;
+        res.innerHTML += `<div class="result"><span>Taxi desde aeropuerto (día): ${taxiAeroDia.toFixed(2)} €</span></div>`;
+        res.innerHTML += `<div class="result"><span>Taxi desde aeropuerto (noche, fines y festivos): ${taxiAeroNoche.toFixed(2)} €</span></div>`;
       }
     }
   </script>

@@ -9,11 +9,11 @@ require_once('../db_pdo.php');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    $usuario['DNI'] = $_POST['DNI'];
+    $usuario['Nombre de usuario'] = $_POST['Nombre de usuario'];
     $usuario['Nombre'] = $_POST['Nombre'];
     $usuario['Apellidos'] = $_POST['Apellidos'];
     $usuario['Domicilio'] = $_POST['Domicilio'];
-    $usuario['Gmail'] = $_POST['Gmail'];
+    $usuario['Correo electronico'] = $_POST['Correo electronico'];
     $usuario['Teléfono'] = $_POST['Teléfono'];
     $usuario['Contraseña'] = $_POST['Contraseña'];
 

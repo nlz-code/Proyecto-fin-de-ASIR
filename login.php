@@ -2,12 +2,12 @@
 session_start();
 require_once 'db_pdo.php';
 
-$gmail = $_POST['gmail'] ?? '';
+$nombre_usuario = $_POST['nombre_usuario'] ?? '';
 $clave = $_POST['clave'] ?? '';
 
 try {
-    $stmt = $pdo->prepare("SELECT * FROM usuario WHERE gmail = :gmail AND clave = :clave");
-    $stmt->execute([':gmail' => $gmail, ':clave' => $clave]);
+    $stmt = $pdo->prepare("SELECT * FROM usuario WHERE nombre_usuario = :nombre_usuario AND clave = :clave");
+    $stmt->execute([':nombre_usuario' => $nombre_usuario, ':clave' => $clave]);
     $usuario = $stmt->fetch();
 
     if ($usuario) {

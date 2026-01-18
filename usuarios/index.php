@@ -3,25 +3,25 @@ session_start();
 require_once '../db_pdo.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $dni = $_POST['dni'] ?? '';
+    $nombre_usuario = $_POST['nombre_usuario'] ?? '';
     $nombre = $_POST['nombre'] ?? '';
     $apellidos = $_POST['apellidos'] ?? '';
     $domicilio = $_POST['domicilio'] ?? '';
     $telefono = $_POST['telefono'] ?? '';
-    $gmail = $_POST['gmail'] ?? '';
+    $correo_electronico = $_POST['correo_electronico'] ?? '';
     $clave = $_POST['clave'] ?? '';
 
     try {
-        $stmt = $pdo->prepare("INSERT INTO usuario (DNI, Nombre, Apellidos, Domicilio, telefono, Gmail, clave)
-                               VALUES (:dni, :nombre, :apellidos, :domicilio, :telefono, :gmail, :clave)");
+        $stmt = $pdo->prepare("INSERT INTO usuario (nombre_usuario, Nombre, Apellidos, Domicilio, telefono, correo_electronico, clave)
+                               VALUES (:nombre_usuario, :nombre, :apellidos, :domicilio, :telefono, :correo_electronico, :clave)");
 
         $stmt->execute([
-            ':dni' => $dni,
+            ':nombre_usuario' => $nombre_usuario,
             ':nombre' => $nombre,
             ':apellidos' => $apellidos,
             ':domicilio' => $domicilio,
             ':telefono' => $telefono,
-            ':gmail' => $gmail,
+            ':correo_electronico' => $correo_electronico,
             ':clave' => $clave
         ]);
 
@@ -52,12 +52,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
 
     <form method="post">
-        <input name="dni" class="form-control mb-2" placeholder="DNI" required>
+        <input name="nombre_usuario" class="form-control mb-2" placeholder="Nombre de usuario" required>
         <input name="nombre" class="form-control mb-2" placeholder="Nombre" required>
         <input name="apellidos" class="form-control mb-2" placeholder="Apellidos" required>
         <input name="domicilio" class="form-control mb-2" placeholder="Domicilio" required>
         <input name="telefono" class="form-control mb-2" placeholder="Teléfono" required>
-        <input name="gmail" class="form-control mb-2" placeholder="Gmail" required>
+        <input name="correo electronico" class="form-control mb-2" placeholder="Correo electrónico" required>
         <input name="clave" type="password" class="form-control mb-2" placeholder="Contraseña" required>
         <button type="submit" class="btn btn-primary">Registrarse</button>
     </form>
