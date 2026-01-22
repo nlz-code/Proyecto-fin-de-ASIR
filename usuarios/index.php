@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Registro de usuario</title>
+  <link href="../bootstrap-5.3.8-dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
   <h2>Formulario de registro</h2>
