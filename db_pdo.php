@@ -1,14 +1,15 @@
 <?php
-$host = 'proyecto-db'; // nombre del contenedor MySQL en Docker
-$db   = 'proyecto';    // nombre de la base de datos
-$user = 'root';        // usuario de MySQL
-$pass = '1234'; // reemplaza con la contraseña real
-$charset = 'utf8mb4';
+$host = 'db';
+$usuario = 'usuario';
+$contrasena = 'usuario123';
+$baseDatos = 'proyecto';
 
-$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
-$options = [
-    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-];
+try {
+    $conexion = new PDO("mysql:host=$host;dbname=$baseDatos;charset=utf8mb4", $usuario, $contrasena);
+    $conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    // No imprimir nada aquí
+} catch (PDOException $e) {
+    // Puedes lanzar una excepción o redirigir a una página de error
+    die("Error de conexión: " . $e->getMessage());
+}
 
-$pdo = new PDO($dsn, $user, $pass, $options);

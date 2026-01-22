@@ -1,30 +1,40 @@
 <?php
-session_start();
-if (!isset($_SESSION['usuario'])) {
-    header('Location: ../index.php');
-    exit;
-}
-require_once('../config.php');
-require_once('../db_pdo.php');
+require '../db_pdo.php'; // Asegúrate de que esta ruta es correcta
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+// Recoger datos del formulario
+$usuario = [
+    'nombre_usuario'      => $_POST['nombre_usuario'],
+    'nombre'              => $_POST['nombre'],
+    'apellidos'           => $_POST['apellidos'],
+    'domicilio'           => $_POST['domicilio'],
+    'correo_electronico'  => $_POST['correo_electronico'],
+    'telefono'            => $_POST['telefono'],
+    'contrasenya'         => password_hash($_POST['contrasenya'], PASSWORD_DEFAULT) // Cifrado seguro
+];
 
-    $usuario['Nombre de usuario'] = $_POST['Nombre de usuario'];
-    $usuario['Nombre'] = $_POST['Nombre'];
-    $usuario['Apellidos'] = $_POST['Apellidos'];
-    $usuario['Domicilio'] = $_POST['Domicilio'];
-    $usuario['Correo electronico'] = $_POST['Correo electronico'];
-    $usuario['Teléfono'] = $_POST['Teléfono'];
-    $usuario['Contraseña'] = $_POST['Contraseña'];
+// Consulta SQL adaptada a la tabla 'usuario'
+$sql = "INSERT INTO usuario 
+(nombre_usuario, nombre, apellidos, domicilio, correo_electronico, telefono, contrasenya) 
+VALUES 
+(:nombre_usuario, :nombre, :apellidos, :domicilio, :correo_electronico, :telefono, :contrasenya)";
 
-    $db = db_open();
-    if ($db) {
-        $id = db_insert($db, 'usuarios', $usuario);
+try {
+    $stmt = $conexion->prepare($sql);
+    $stmt->execute([
+        ':nombre_usuario'     => $usuario['nombre_usuario'],
+        ':nombre'             => $usuario['nombre'],
+        ':apellidos'          => $usuario['apellidos'],
+        ':domicilio'          => $usuario['domicilio'],
+        ':correo_electronico' => $usuario['correo_electronico'],
+        ':telefono'           => $usuario['telefono'],
+        ':contrasenya'        => $usuario['contrasenya']
+    ]);
 
-        //echo "Se ha insertado un usuario con id $id";
+    // Redirección limpia a la página principal
+    header("Location: ../Principal/index.html");
+    exit();
 
-        db_close($db);
-
-        header('Location: index.php');
-    }
+} catch (PDOException $e) {
+    // Manejo de errores sin interferir con las cabeceras
+    echo "<p>Error al insertar usuario: " . htmlspecialchars($e->getMessage()) . "</p>";
 }
