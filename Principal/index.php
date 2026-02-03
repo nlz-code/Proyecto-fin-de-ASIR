@@ -8,7 +8,7 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-image: url('../taxi.jpg');
+      background-image: url('../img/taxi.jpg');
       color: #333;
       margin: 0;
       padding: 0;

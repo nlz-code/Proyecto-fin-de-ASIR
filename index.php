@@ -12,13 +12,13 @@ if (isset($_SESSION['usuario'])) {
     <meta charset="utf-8">
     <title>Mobility Alliance</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="signin.css" rel="stylesheet">
+    <link href="../css/signin.css" rel="stylesheet">
 </head>
 
 <body class="text-center">
     <main class="form-signin w-100 m-auto">
-        <form action="login.php" method="post">
-            <img class="mb-4" src="transporte.png" width="160" height="120">
+        <form action="login/login.php" method="post">
+            <img class="mb-4" src="/img/transporte.png" width="160" height="120">
             <h1 class="h3 mb-3 fw-normal">Bienvenido a Mobility Alliance</h1>
 
             <?php if (isset($_SESSION['error'])): ?>

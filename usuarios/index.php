@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '../db_pdo.php';
+require_once '../db/db_pdo.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombre_usuario = $_POST['nombre_usuario'] ?? '';
@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ]);
 
         $_SESSION['usuario'] = $nombre;
-        header('Location: ../principal/index.html');
+        header('Location: ../principal/index.php');
         exit;
     } catch (PDOException $e) {
         $_SESSION['error'] = 'Error al registrar usuario: ' . $e->getMessage();
