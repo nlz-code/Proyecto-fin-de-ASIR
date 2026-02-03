@@ -1,28 +1,26 @@
 <?php
-require 'db_pdo.php';
+session_start();
+require_once 'db_pdo.php';
 
-if (isset($_POST['login'])) {
+$nombre_usuario = $_POST['nombre_usuario'] ?? '';
+$clave = $_POST['clave'] ?? '';
 
-    $nombre_usuario = $_POST['nombre_usuario'];
-    $contrasenya = $_POST['contrasenya'];
+try {
+    $stmt = $pdo->prepare("SELECT * FROM usuario WHERE nombre_usuario = :nombre_usuario AND clave = :clave");
+    $stmt->execute([':nombre_usuario' => $nombre_usuario, ':clave' => $clave]);
+    $usuario = $stmt->fetch();
 
-    // Buscar usuario en la BD
-    $sql = "SELECT * FROM usuario WHERE nombre_usuario = :nombre_usuario";
-    $stmt = $conexion->prepare($sql);
-    $stmt->execute([':nombre_usuario' => $nombre_usuario]);
-    $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if ($usuario && password_verify($contrasenya, $usuario['contrasenya'])) {
-
-        // Crear sesión
-        $_SESSION['usuario'] = $usuario['nombre_usuario'];
-
-        // Redirigir a principal
-        header("Location: /Principal/index.html");
-        exit();
-
+    if ($usuario) {
+        $_SESSION['usuario'] = $usuario['nombre'];
+        header('Location: principal/index.php');
+        exit;
     } else {
-        echo "<p style='color:red;'>Usuario o contraseña incorrectos</p>";
+        $_SESSION['error'] = 'Credenciales incorrectas';
+        header('Location: index.php');
+        exit;
     }
+} catch (PDOException $e) {
+    $_SESSION['error'] = 'Error en la conexión';
+    header('Location: index.php');
+    exit;
 }
-?>
