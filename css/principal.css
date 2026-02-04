@@ -1,6 +1,6 @@
 body {
     font-family: Arial, sans-serif;
-    background-image: url('../taxi.jpg');
+    background-image: url('../img/taxi.jpg');
     color: #333;
     margin: 0;
     padding: 0;
@@ -8,21 +8,34 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
+    padding-top: 70px;
+    /* espacio para la navbar fija */
 }
 
-/* Botón de salir arriba a la derecha */
-.logout-btn {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background-color: #e74c3c;
+.hero {
+    background: url('../img/transporte.png') no-repeat center center;
+    background-size: cover;
+    height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 16px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7);
+}
+
+.hero h1 {
+    font-size: 3rem;
+}
+
+.hero p {
+    font-size: 1.5rem;
+}
+
+footer {
+    background-color: #0d6efd;
+    color: white;
+    padding: 1rem 0;
+    text-align: center;
 }
 
 .logout-btn:hover {

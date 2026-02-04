@@ -1,28 +1,46 @@
 <?php
 session_start();
-if (!isset($_SESSION['usuario'])) {
-    header('Location: ../index.php');
+
+// Solo puede acceder si NO hay usuario logueado
+if (isset($_SESSION['usuario'])) {
+    // Si ya está logueado, lo mandamos a la página principal
+    header('Location: ../principal/index.html');
     exit;
 }
 
-require_once('../db/config.php');
-require_once('../db/db_pdo.php');
+require_once('../db_pdo.php');
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $usuario['nombre_usuario'] = $_POST['Nombre de usuario'];
-    $usuario['nombre'] = $_POST['Nombre'];
-    $usuario['Apellidos'] = $_POST['Apellidos'];
-    $usuario['Domicilio'] = $_POST['Domicilio'];
-    $usuario['correo_electronico'] = $_POST['Correo electronico'];
-    $usuario['telefono'] = $_POST['Teléfono'];
-    $usuario['clave'] = password_hash($_POST['Contraseña'], PASSWORD_DEFAULT);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $db = db_open();
-    if ($db) {
-        $id = db_insert($db, 'usuarios', $usuario);
-        db_close($db);
+    // Recolectamos los datos del formulario
+    $usuario = [
+        'nombre_usuario'      => trim($_POST['nombre_usuario'] ?? ''),
+        'nombre'              => trim($_POST['nombre'] ?? ''),
+        'apellidos'           => trim($_POST['apellidos'] ?? ''),
+        'domicilio'           => trim($_POST['domicilio'] ?? ''),
+        'correo_electronico'  => trim($_POST['correo_electronico'] ?? ''),
+        'telefono'            => trim($_POST['telefono'] ?? ''),
+        'clave'               => password_hash($_POST['clave'] ?? '', PASSWORD_DEFAULT),
+    ];
+
+    try {
+        // Inserción con PDO
+        $sql = "INSERT INTO usuarios 
+                (nombre_usuario, nombre, apellidos, domicilio, correo_electronico, telefono, clave)
+                VALUES 
+                (:nombre_usuario, :nombre, :apellidos, :domicilio, :correo_electronico, :telefono, :clave)";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($usuario);
+
+        // Guardamos el usuario en sesión y redirigimos a la página principal
+        $_SESSION['usuario'] = $usuario['nombre_usuario'];
+        header('Location: ../principal/index.html');
+        exit;
+
+    } catch (PDOException $e) {
+        // Mensaje de error mientras desarrollas
+        die("Error al registrar usuario: " . $e->getMessage());
     }
-
-    header('Location: index.php');
 }
 ?>
+

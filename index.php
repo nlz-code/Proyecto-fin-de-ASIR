@@ -1,9 +1,15 @@
 <?php
 session_start();
+
+// Si ya hay un usuario logueado, redirige directo a la página principal
 if (isset($_SESSION['usuario'])) {
-    header('Location: principal/index.php');
+    header('Location: principal/index.html');
     exit;
 }
+
+// Guardamos el error en una variable temporal y lo eliminamos de sesión
+$error = $_SESSION['error'] ?? '';
+unset($_SESSION['error']);
 ?>
 <!doctype html>
 <html lang="es">
@@ -18,32 +24,30 @@ if (isset($_SESSION['usuario'])) {
 <body class="text-center">
     <main class="form-signin w-100 m-auto">
         <form action="login/login.php" method="post">
-            <img class="mb-4" src="/img/transporte.png" width="160" height="120">
-            <h1 class="h3 mb-3 fw-normal">Bienvenido a Mobility Alliance</h1>
+            <img class="mb-4" src="/img/transporte.png" width="210" height="140">
+            <h1 class="h3 mb-3 fw-normal">Inicio de sesión</h1>
 
-            <?php if (isset($_SESSION['error'])): ?>
+            <?php if ($error): ?>
                 <div class="alert alert-danger" role="alert">
-                    <?php echo $_SESSION['error'] ?>
+                    <?php echo $error ?>
                 </div>
             <?php endif; ?>
 
-            <div class="form-floating">
+            <div class="form-floating mb-2">
                 <input name="nombre_usuario" class="form-control" id="floatingUser" placeholder="Nombre de usuario" required>
                 <label for="floatingUser">Nombre de usuario</label>
             </div>
 
-            <div class="form-floating">
+            <div class="form-floating mb-2">
                 <input name="clave" type="password" class="form-control" id="floatingPassword" placeholder="Contraseña" required>
                 <label for="floatingPassword">Contraseña</label>
             </div>
 
-
             <button class="w-100 btn btn-lg btn-primary" type="submit">Acceder</button>
+
+            <p class="mt-3">¿No tienes cuenta? <a href="usuarios/index.php">Regístrate</a></p>
             <p class="mt-5 mb-3 text-muted">&copy; Mobility Alliance, <?php echo date('Y') ?></p>
         </form>
-        <p>¿No tienes cuenta? <a href="usuarios/index.php">Regístrate</a></p>
     </main>
 </body>
-
 </html>
-<?php unset($_SESSION['error']); ?>
