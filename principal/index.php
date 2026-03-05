@@ -1,3 +1,12 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['usuario'])) {
+    header("Location: ../login/login.php");
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -21,9 +30,8 @@
 
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link active" href="./index.html">Inicio</a></li>
-          <li class="nav-item"><a class="nav-link" href="./taxistas/index.php">Taxistas</a></li>
-          <li class="nav-item"><a class="nav-link" href="./viajes favoritos/index.php">Viajes favoritos</a></li>
+          <li class="nav-item"><a class="nav-link active" href="./index.php">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="./viajes_favoritos/index.php">Viajes favoritos</a></li>
           <li class="nav-item"><a class="nav-link" href="./contactos/index.php">Contacto</a></li>
           <li class="nav-item"><a class="nav-link" href="./perfil/index.php">Mi perfíl</a></li>
           <li class="nav-item"><a class="nav-link" href="../login/logout.php">Cerrar sesión</a></li>
@@ -72,11 +80,11 @@
       res.innerHTML += `<div class="result"><span>Uber: ${uber.toFixed(2)} €</span> <a href="https://www.uber.com/es/" target="_blank">Reservar</a></div>`;
       res.innerHTML += `<div class="result"><span>Cabify: ${cabify.toFixed(2)} €</span> <a href="https://cabify.com/es" target="_blank">Reservar</a></div>`;
       res.innerHTML += `<div class="result"><span>Bolt: ${bolt.toFixed(2)} €</span> <a href="https://bolt.eu/es-es/" target="_blank">Reservar</a></div>`;
-      res.innerHTML += `<div class="result"><span>Taxi (día y entre semana): ${taxiDia.toFixed(2)} €</span></div>`;
-      res.innerHTML += `<div class="result"><span>Taxi (noche, fines y festivos): ${taxiNoche.toFixed(2)} €</span></div>`;
+      res.innerHTML += `<div class="result"><span>Taxi (día y entre semana): ${taxiDia.toFixed(2)} €</span><a href="./taxistas/index.php" target="_blank">Contactar</a></div>`;
+      res.innerHTML += `<div class="result"><span>Taxi (noche, fines y festivos): ${taxiNoche.toFixed(2)} €</span><a href="./taxistas/index.php" target="_blank">Contactar</a></div>`;
       if (taxiAeroDia !== null) {
-        res.innerHTML += `<div class="result"><span>Taxi desde aeropuerto (día): ${taxiAeroDia.toFixed(2)} €</span></div>`;
-        res.innerHTML += `<div class="result"><span>Taxi desde aeropuerto (noche, fines y festivos): ${taxiAeroNoche.toFixed(2)} €</span></div>`;
+        res.innerHTML += `<div class="result"><span>Taxi desde aeropuerto (día): ${taxiAeroDia.toFixed(2)} €</span><a href="./taxistas/index.php" target="_blank">Contactar</a></div>`;
+        res.innerHTML += `<div class="result"><span>Taxi desde aeropuerto (noche, fines y festivos): ${taxiAeroNoche.toFixed(2)} €</span><a href="./taxistas/index.php" target="_blank">Contactar</a></div>`;
       }
     }
   </script>

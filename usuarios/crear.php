@@ -4,7 +4,7 @@ session_start();
 // Solo puede acceder si NO hay usuario logueado
 if (isset($_SESSION['usuario'])) {
     // Si ya está logueado, lo mandamos a la página principal
-    header('Location: ../principal/index.html');
+    header('Location: ../principal/index.php');
     exit;
 }
 
@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Guardamos el usuario en sesión y redirigimos a la página principal
         $_SESSION['usuario'] = $usuario['nombre_usuario'];
-        header('Location: ../principal/index.html');
+        header('Location: ../principal/index.php');
         exit;
 
     } catch (PDOException $e) {

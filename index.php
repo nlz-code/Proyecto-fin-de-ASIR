@@ -3,7 +3,7 @@ session_start();
 
 // Si ya hay un usuario logueado, redirige directo a la página principal
 if (isset($_SESSION['usuario'])) {
-    header('Location: principal/index.html');
+    header('Location: principal/index.php');
     exit;
 }
 
@@ -17,7 +17,7 @@ unset($_SESSION['error']);
 <head>
     <meta charset="utf-8">
     <title>Mobility Alliance</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bootstrap-5.3.8-dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="../css/signin.css" rel="stylesheet">
 </head>
 

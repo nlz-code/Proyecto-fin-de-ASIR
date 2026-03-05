@@ -2,6 +2,13 @@
 session_start();
 require_once '../db_pdo.php';
 
+// Si el usuario ya está logueado, lo enviamos a principal
+if (isset($_SESSION['usuario'])) {
+    header('Location: ../principal/index.php');
+    exit;
+}
+
+// Solo procesamos POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombre_usuario = trim($_POST['nombre_usuario'] ?? '');
     $clave = $_POST['clave'] ?? '';
@@ -14,25 +21,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($usuario && password_verify($clave, $usuario['clave'])) {
+                // Login correcto
                 $_SESSION['usuario'] = $usuario['nombre_usuario'];
-                header('Location: ../principal/index.html');
+                header('Location: ../principal/index.php');
                 exit;
             } else {
                 $_SESSION['error'] = 'Usuario o contraseña incorrectos';
-                header('Location: ../principal/index.php');
-                exit;
             }
         } catch (PDOException $e) {
             $_SESSION['error'] = 'Error en la base de datos: ' . $e->getMessage();
-            header('Location: ../principal/index.php');
-            exit;
         }
     } else {
         $_SESSION['error'] = 'Por favor, completa todos los campos';
-        header('Location: ../principal/index.php');
-        exit;
     }
-} else {
-    header('Location: ../principal/index.php');
-    exit;
 }
+
+// Si no es POST, o hubo error, volvemos al formulario de login
+header('Location: ../index.php');
+exit;

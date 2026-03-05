@@ -4,7 +4,7 @@ require_once '../db_pdo.php';
 
 // Si ya hay un usuario logueado, lo mandamos a la principal
 if (isset($_SESSION['usuario'])) {
-    header('Location: ../principal/index.html');
+    header('Location: ../principal/index.php');
     exit;
 }
 
@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Guardamos el usuario en sesión y redirigimos a la principal
         $_SESSION['usuario'] = $usuario['nombre_usuario'];
-        header('Location: ../principal/index.html');
+        header('Location: ../principal/index.php');
         exit;
 
     } catch (PDOException $e) {
