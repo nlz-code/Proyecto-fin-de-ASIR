@@ -31,14 +31,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare($sql);
         $stmt->execute($usuario);
 
-        // Guardamos el usuario en sesión y redirigimos a la principal
-        $_SESSION['usuario'] = $usuario['nombre_usuario'];
-        header('Location: ../principal/index.php');
+        // Destruimos la sesión y redirigimos al login
+        session_destroy();
+        header('Location: ../index.php');
         exit;
 
     } catch (PDOException $e) {
         // Guardamos el error en sesión para mostrarlo en el formulario
-        $_SESSION['error'] = "Error al registrar usuario: " . $e->getMessage();
+        $_SESSION['error'] = "Error al registrar usuario";
         header('Location: index.php');  // redirige al mismo formulario
         exit;
     }

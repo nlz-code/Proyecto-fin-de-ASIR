@@ -20,14 +20,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute([':nombre_usuario' => $nombre_usuario]);
             $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if ($usuario && password_verify($clave, $usuario['clave'])) {
-                // Login correcto
-                $_SESSION['usuario'] = $usuario['nombre_usuario'];
-                header('Location: ../principal/index.php');
-                exit;
+            if ($usuario) {
+                // Verificar contraseña
+                if (password_verify($clave, $usuario['clave'])) {
+                    // Login correcto
+                    $_SESSION['usuario'] = $usuario['nombre_usuario'];
+                    header('Location: ../principal/index.php');
+                    exit;
+                } else {
+                    $_SESSION['error'] = 'Usuario o contraseña incorrectos';
+                }
             } else {
                 $_SESSION['error'] = 'Usuario o contraseña incorrectos';
             }
+
         } catch (PDOException $e) {
             $_SESSION['error'] = 'Error en la base de datos: ' . $e->getMessage();
         }

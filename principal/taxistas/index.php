@@ -10,11 +10,47 @@ if (!isset($_SESSION['usuario'])) {
     exit();
 }
 
+// Procesar la reserva si se envía el formulario
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['numero_licencia'])) {
+    $nombre_usuario = $_SESSION['usuario'];
+    $numero_licencia = trim($_POST['numero_licencia']);
+    $fecha_recogida = trim($_POST['fecha_recogida']);
+    $hora_recogida = trim($_POST['hora_recogida']);
+    $direccion_recogida = trim($_POST['direccion_recogida']);
+
+    // Validar que todos los campos estén completos
+    if ($nombre_usuario && $numero_licencia && $fecha_recogida && $hora_recogida && $direccion_recogida) {
+        try {
+            $sql = "INSERT INTO reservas 
+                    (nombre_usuario, numero_licencia, fecha_recogida, hora_recogida, direccion_recogida, estado)
+                    VALUES 
+                    (:nombre_usuario, :numero_licencia, :fecha_recogida, :hora_recogida, :direccion_recogida, 'pendiente')";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([
+                ':nombre_usuario' => $nombre_usuario,
+                ':numero_licencia' => $numero_licencia,
+                ':fecha_recogida' => $fecha_recogida,
+                ':hora_recogida' => $hora_recogida,
+                ':direccion_recogida' => $direccion_recogida
+            ]);
+
+            $_SESSION['exito'] = 'Reserva realizada exitosamente';
+            header('Location: index.php');
+            exit;
+
+        } catch (PDOException $e) {
+            $_SESSION['error'] = 'Error al realizar la reserva: ' . $e->getMessage();
+        }
+    } else {
+        $_SESSION['error'] = 'Por favor, completa todos los campos de la reserva';
+    }
+}
+
 // Hora actual en formato HH:MM
 $hora_actual = date('H:i');
 
 // Obtener todos los taxistas ordenados alfabéticamente por nombre y apellidos
-$stmt = $pdo->query("SELECT nombre, apellidos, telefono, horario FROM taxistas ORDER BY nombre ASC, apellidos ASC");
+$stmt = $pdo->query("SELECT numero_licencia, nombre, apellidos, telefono, horario FROM taxistas ORDER BY nombre ASC, apellidos ASC");
 $taxistas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Filtrar solo los que están disponibles ahora
@@ -64,19 +100,75 @@ $taxistas_disponibles = array_filter($taxistas, function($taxista) use ($hora_ac
 
 <div class="container mt-4">
     <h1>Taxistas disponibles ahora (Hora actual: <?= $hora_actual ?>)</h1>
+
+    <?php if (!empty($_SESSION['exito'])): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <?php echo $_SESSION['exito']; ?>
+            <?php unset($_SESSION['exito']); ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
+
+    <?php if (!empty($_SESSION['error'])): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <?php echo $_SESSION['error']; ?>
+            <?php unset($_SESSION['error']); ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
+
     <?php if (count($taxistas_disponibles) === 0): ?>
         <p>No hay taxistas disponibles en este momento.</p>
     <?php else: ?>
         <div class="list-group">
             <?php foreach ($taxistas_disponibles as $taxista): ?>
-                <div class="list-group-item d-flex justify-content-between align-items-center">
-                    <div>
-                        <strong><?= htmlspecialchars($taxista['nombre'] . ' ' . $taxista['apellidos']) ?></strong><br>
-                        <small>Horario: <?= htmlspecialchars($taxista['horario']) ?></small>
+                <div class="list-group-item">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <strong><?= htmlspecialchars($taxista['nombre'] . ' ' . $taxista['apellidos']) ?></strong><br>
+                            <small>Teléfono: <?= htmlspecialchars($taxista['telefono']) ?></small><br>
+                            <small>Horario: <?= htmlspecialchars($taxista['horario']) ?></small>
+                        </div>
+                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalReserva<?= htmlspecialchars($taxista['numero_licencia']) ?>">
+                            Reservar
+                        </button>
                     </div>
-                    <button class="btn btn-outline-primary btn-sm" onclick="copiarTelefono('<?= htmlspecialchars($taxista['telefono']) ?>')">
-                        Copiar número
-                    </button>
+                </div>
+
+                <!-- Modal de Reserva -->
+                <div class="modal fade" id="modalReserva<?= htmlspecialchars($taxista['numero_licencia']) ?>" tabindex="-1" aria-labelledby="labelReserva" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="labelReserva">Reservar taxi con <?= htmlspecialchars($taxista['nombre'] . ' ' . $taxista['apellidos']) ?></h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form method="POST">
+                                <div class="modal-body">
+                                    <input type="hidden" name="numero_licencia" value="<?= htmlspecialchars($taxista['numero_licencia']) ?>">
+
+                                    <div class="mb-3">
+                                        <label for="fecha_recogida<?= htmlspecialchars($taxista['numero_licencia']) ?>" class="form-label">Fecha de recogida</label>
+                                        <input type="date" class="form-control" id="fecha_recogida<?= htmlspecialchars($taxista['numero_licencia']) ?>" name="fecha_recogida" required min="<?= date('Y-m-d') ?>">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="hora_recogida<?= htmlspecialchars($taxista['numero_licencia']) ?>" class="form-label">Hora de recogida</label>
+                                        <input type="time" class="form-control" id="hora_recogida<?= htmlspecialchars($taxista['numero_licencia']) ?>" name="hora_recogida" required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="direccion_recogida<?= htmlspecialchars($taxista['numero_licencia']) ?>" class="form-label">Dirección de recogida</label>
+                                        <input type="text" class="form-control" id="direccion_recogida<?= htmlspecialchars($taxista['numero_licencia']) ?>" name="direccion_recogida" placeholder="Ej: Calle Principal, 123" required>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    <button type="submit" class="btn btn-primary">Confirmar reserva</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             <?php endforeach; ?>
         </div>
@@ -84,15 +176,5 @@ $taxistas_disponibles = array_filter($taxistas, function($taxista) use ($hora_ac
 </div>
 
 <script src="../../bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
-<script>
-function copiarTelefono(numero) {
-    navigator.clipboard.writeText(numero).then(() => {
-        alert('Número copiado: ' + numero);
-    }).catch(err => {
-        alert('Error al copiar el número');
-        console.error(err);
-    });
-}
-</script>
 </body>
 </html>
