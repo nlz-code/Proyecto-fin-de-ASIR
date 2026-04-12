@@ -25,7 +25,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (password_verify($clave, $usuario['clave'])) {
                     // Login correcto
                     $_SESSION['usuario'] = $usuario['nombre_usuario'];
-                    header('Location: ../principal/index.php');
+                    $_SESSION['rol'] = $usuario['rol'];
+                    
+                    // Si es admin, redirige a admin, sino a principal
+                    if ($usuario['rol'] === 'admin') {
+                        header('Location: ../admin/index.php');
+                    } else {
+                        header('Location: ../principal/index.php');
+                    }
                     exit;
                 } else {
                     $_SESSION['error'] = 'Usuario o contraseña incorrectos';
