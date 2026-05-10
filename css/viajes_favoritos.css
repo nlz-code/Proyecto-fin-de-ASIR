@@ -1,0 +1,114 @@
+body {
+    padding-top: 70px;
+}
+
+.container {
+    margin-top: 30px;
+}
+
+.favorito-card {
+    align-items: center;
+    background-color: #f8f9fa;
+    border-left: 4px solid #0d6efd;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+    padding: 15px;
+}
+
+.favorito-info {
+    flex-grow: 1;
+}
+
+.favorito-nombre {
+    color: #333;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.favorito-datos {
+    color: #666;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.favorito-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-left: 15px;
+}
+
+.btn-usar,
+.btn-editar,
+.btn-eliminar {
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 8px 12px;
+    text-decoration: none;
+}
+
+.btn-usar {
+    background-color: #28a745;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.btn-usar:hover {
+    background-color: #218838;
+}
+
+.btn-editar {
+    background-color: #0d6efd;
+}
+
+.btn-editar:hover {
+    background-color: #0b5ed7;
+}
+
+.btn-eliminar {
+    background-color: #dc3545;
+}
+
+.btn-eliminar:hover {
+    background-color: #c82333;
+}
+
+.sin-favoritos {
+    color: #999;
+    padding: 40px;
+    text-align: center;
+}
+
+.sin-favoritos i {
+    display: block;
+    font-size: 48px;
+    margin-bottom: 15px;
+}
+
+.mt-acciones {
+    margin-top: 15px;
+}
+
+@media (max-width: 768px) {
+    .favorito-card {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .favorito-acciones {
+        margin-left: 0;
+    }
+
+    .btn-usar,
+    .btn-editar,
+    .btn-eliminar {
+        flex: 1 1 100%;
+        text-align: center;
+    }
+}

@@ -1,15 +1,15 @@
 body {
     font-family: Arial, sans-serif;
     background-image: url('../img/taxi.jpg');
+    background-position: center;
+    background-size: cover;
     color: #333;
     margin: 0;
-    padding: 0;
+    padding: 90px 12px 24px;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    padding-top: 70px;
-    /* espacio para la navbar fija */
+    min-height: 100vh;
 }
 
 .hero {
@@ -56,6 +56,20 @@ h1 {
     color: #000;
 }
 
+.intro-text {
+    text-align: center;
+}
+
+.favorito-container {
+    display: none;
+    margin-top: 15px;
+    text-align: center;
+}
+
+.error-message {
+    color: red;
+}
+
 label {
     display: block;
     margin-bottom: 10px;
@@ -72,6 +86,7 @@ input[type="number"] {
 }
 
 .result {
+    gap: 12px;
     background-color: #ecf0f1;
     padding: 10px;
     margin: 10px 0;
@@ -113,4 +128,32 @@ button {
 
 button:hover {
     background-color: #2980b9;
+}
+
+@media (max-width: 576px) {
+    body {
+        align-items: flex-start;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .container {
+        padding: 18px;
+    }
+
+    h1 {
+        font-size: 1.7rem;
+    }
+
+    .result {
+        align-items: stretch;
+        flex-direction: column;
+        font-size: 16px;
+    }
+
+    .result a {
+        display: block;
+        text-align: center;
+        width: 100%;
+    }
 }

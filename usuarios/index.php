@@ -2,44 +2,59 @@
 session_start();
 require_once '../db_pdo.php';
 
-// Si ya hay un usuario logueado, lo mandamos a la principal
 if (isset($_SESSION['usuario'])) {
     header('Location: ../principal/index.php');
     exit;
 }
 
-// Procesamos el formulario al enviarlo
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-    // Recolectamos los datos del formulario
+    $clave = $_POST['clave'] ?? '';
     $usuario = [
-        'nombre_usuario'     => trim($_POST['nombre_usuario'] ?? ''),
-        'nombre'             => trim($_POST['nombre'] ?? ''),
-        'apellidos'          => trim($_POST['apellidos'] ?? ''),
-        'domicilio'          => trim($_POST['domicilio'] ?? ''),
-        'telefono'           => trim($_POST['telefono'] ?? ''),
+        'nombre_usuario' => trim($_POST['nombre_usuario'] ?? ''),
+        'nombre' => trim($_POST['nombre'] ?? ''),
+        'apellidos' => trim($_POST['apellidos'] ?? ''),
+        'domicilio' => trim($_POST['domicilio'] ?? ''),
+        'telefono' => trim($_POST['telefono'] ?? ''),
         'correo_electronico' => trim($_POST['correo_electronico'] ?? ''),
-        'clave'              => password_hash($_POST['clave'] ?? '', PASSWORD_DEFAULT),
+        'clave' => password_hash($clave, PASSWORD_DEFAULT),
     ];
 
     try {
-        // Insertamos el usuario en la tabla 'usuarios'
-        $sql = "INSERT INTO usuarios 
+        if (!$usuario['nombre_usuario'] || !$usuario['nombre'] || !$usuario['correo_electronico'] || !$clave) {
+            $_SESSION['error'] = 'Completa todos los campos obligatorios';
+            header('Location: index.php');
+            exit;
+        }
+
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM usuarios WHERE nombre_usuario = :nombre_usuario");
+        $stmt->execute([':nombre_usuario' => $usuario['nombre_usuario']]);
+        if ($stmt->fetchColumn() > 0) {
+            $_SESSION['error'] = 'Ese nombre de usuario ya existe';
+            header('Location: index.php');
+            exit;
+        }
+
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM usuarios WHERE correo_electronico = :correo_electronico");
+        $stmt->execute([':correo_electronico' => $usuario['correo_electronico']]);
+        if ($stmt->fetchColumn() > 0) {
+            $_SESSION['error'] = 'Ese correo electronico ya esta registrado';
+            header('Location: index.php');
+            exit;
+        }
+
+        $sql = "INSERT INTO usuarios
                 (nombre_usuario, nombre, apellidos, domicilio, correo_electronico, telefono, clave)
-                VALUES 
+                VALUES
                 (:nombre_usuario, :nombre, :apellidos, :domicilio, :correo_electronico, :telefono, :clave)";
         $stmt = $pdo->prepare($sql);
         $stmt->execute($usuario);
 
-        // Destruimos la sesión y redirigimos al login
-        session_destroy();
+        $_SESSION['exito'] = 'Usuario registrado correctamente. Ya puedes iniciar sesion.';
         header('Location: ../index.php');
         exit;
-
     } catch (PDOException $e) {
-        // Guardamos el error en sesión para mostrarlo en el formulario
-        $_SESSION['error'] = "Error al registrar usuario";
-        header('Location: index.php');  // redirige al mismo formulario
+        $_SESSION['error'] = 'Error al registrar usuario: ' . $e->getMessage();
+        header('Location: index.php');
         exit;
     }
 }
@@ -56,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <h2>Registro de Usuario</h2>
 
     <?php if (!empty($_SESSION['error'])): ?>
-        <div class="alert alert-danger"><?php echo $_SESSION['error']; ?></div>
+        <div class="alert alert-danger"><?php echo htmlspecialchars($_SESSION['error']); ?></div>
         <?php unset($_SESSION['error']); ?>
     <?php endif; ?>
 
@@ -65,10 +80,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <input name="nombre" class="form-control mb-2" placeholder="Nombre" required>
         <input name="apellidos" class="form-control mb-2" placeholder="Apellidos" required>
         <input name="domicilio" class="form-control mb-2" placeholder="Domicilio" required>
-        <input name="telefono" class="form-control mb-2" placeholder="Teléfono" required>
-        <input name="correo_electronico" class="form-control mb-2" placeholder="Correo electrónico" required>
-        <input name="clave" type="password" class="form-control mb-2" placeholder="Contraseña" required>
+        <input name="telefono" class="form-control mb-2" placeholder="Telefono" required>
+        <input name="correo_electronico" type="email" class="form-control mb-2" placeholder="Correo electronico" required>
+        <input name="clave" type="password" class="form-control mb-2" placeholder="Contrasena" required>
         <button type="submit" class="btn btn-primary">Registrarse</button>
+        <a href="../index.php" class="btn btn-secondary">Volver</a>
     </form>
 </body>
 </html>

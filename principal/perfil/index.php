@@ -81,8 +81,9 @@ $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi perfil</title>
     <link href="../../bootstrap-5.3.8-dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../css/paginas.css" rel="stylesheet">
 </head>
-<body style="padding-top: 70px;">
+<body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
     <div class="container-fluid">
         <a class="navbar-brand" href="../index.php">Mobility Alliance</a>

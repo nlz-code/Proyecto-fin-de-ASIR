@@ -1,0 +1,28 @@
+body {
+    padding-top: 70px;
+}
+
+.card-body {
+    overflow-x: auto;
+}
+
+.mensaje-texto {
+    white-space: pre-wrap;
+    min-width: 260px;
+}
+
+@media (max-width: 768px) {
+    body {
+        padding-top: 64px;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    .btn,
+    .btn-group {
+        white-space: nowrap;
+    }
+}
+}

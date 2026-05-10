@@ -1,0 +1,32 @@
+body {
+    padding-top: 70px;
+}
+
+.contacto-container {
+    max-width: 760px;
+}
+
+@media (max-width: 768px) {
+    body {
+        padding-top: 64px;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    .container {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .list-group-item .d-flex {
+        align-items: stretch !important;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .list-group-item .btn {
+        width: 100%;
+    }
+}

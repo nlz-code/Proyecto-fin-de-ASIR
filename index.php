@@ -9,7 +9,9 @@ if (isset($_SESSION['usuario'])) {
 
 // Guardamos el error en una variable temporal y lo eliminamos de sesión
 $error = $_SESSION['error'] ?? '';
+$exito = $_SESSION['exito'] ?? '';
 unset($_SESSION['error']);
+unset($_SESSION['exito']);
 ?>
 <!doctype html>
 <html lang="es">
@@ -30,6 +32,12 @@ unset($_SESSION['error']);
             <?php if ($error): ?>
                 <div class="alert alert-danger" role="alert">
                     <?php echo $error ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($exito): ?>
+                <div class="alert alert-success" role="alert">
+                    <?php echo $exito ?>
                 </div>
             <?php endif; ?>
 

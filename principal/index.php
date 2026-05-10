@@ -2,8 +2,8 @@
 session_start();
 
 if (!isset($_SESSION['usuario'])) {
-    header("Location: ../login/login.php");
-    exit();
+  header("Location: ../login/login.php");
+  exit();
 }
 ?>
 
@@ -43,7 +43,7 @@ if (!isset($_SESSION['usuario'])) {
   <div class="container">
     <h1>Bienvenido a </h1>
     <h1>Mobility Alliance</h1>
-    <p style="text-align: center;">¿A dónde quieres viajar hoy?</p>
+    <p class="intro-text">¿A dónde quieres viajar hoy?</p>
 
     <label for="km">¿Cuántos kilómetros quieres recorrer?</label>
     <input type="number" id="km" placeholder="Introduce los kilómetros" min="0.01" required>
@@ -53,10 +53,42 @@ if (!isset($_SESSION['usuario'])) {
 
     <button onclick="calcularTarifas()">Calcular Tarifas</button>
 
+    <!-- Botón estrella para guardar favorito (se muestra después de calcular) -->
+    <div id="favoritoContainer" class="favorito-container">
+      <button type="button" class="btn btn-warning btn-sm" onclick="abrirModalFavorito()">
+        <i class="fas fa-star"></i> Guardar como favorito
+      </button>
+    </div>
+
     <div id="resultados"></div>
   </div>
 
+  <!-- Modal para guardar favorito -->
+  <div class="modal fade" id="modalFavorito" tabindex="-1" aria-labelledby="modalFavoritoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalFavoritoLabel">Guardar viaje como favorito</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <label for="nombreFavorito">Nombre del favorito:</label>
+          <input type="text" id="nombreFavorito" class="form-control" placeholder="Ej: Viaje al trabajo" required>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" onclick="guardarFavorito()">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
   <script>
+    let kmActual = 0;
+    let minActual = 0;
+    const modal = new bootstrap.Modal(document.getElementById('modalFavorito'));
+
     function calcularTarifas() {
       const km = parseFloat(document.getElementById('km').value);
       const min = parseInt(document.getElementById('min').value);
@@ -64,9 +96,13 @@ if (!isset($_SESSION['usuario'])) {
       res.innerHTML = '';
 
       if (isNaN(km) || isNaN(min) || km <= 0 || min <= 0) {
-        res.innerHTML = "<p style='color:red;'>Por favor, ingresa valores válidos para kilómetros y minutos.</p>";
+        res.innerHTML = "<p class='error-message'>Por favor, ingresa valores válidos para kilómetros y minutos.</p>";
+        document.getElementById('favoritoContainer').style.display = 'none';
         return;
       }
+
+      kmActual = km;
+      minActual = min;
 
       const uber = km * 1.2 + min * 0.1;
       const cabify = km > 20 ? (20 * 1.65 + (km - 20) * 1.1) : (km * 1.65);
@@ -86,7 +122,59 @@ if (!isset($_SESSION['usuario'])) {
         res.innerHTML += `<div class="result"><span>Taxi desde aeropuerto (día): ${taxiAeroDia.toFixed(2)} €</span><a href="./taxistas/index.php" target="_blank">Contactar</a></div>`;
         res.innerHTML += `<div class="result"><span>Taxi desde aeropuerto (noche, fines y festivos): ${taxiAeroNoche.toFixed(2)} €</span><a href="./taxistas/index.php" target="_blank">Contactar</a></div>`;
       }
+
+      // Mostrar botón para guardar favorito
+      document.getElementById('favoritoContainer').style.display = 'block';
     }
+
+    function abrirModalFavorito() {
+      document.getElementById('nombreFavorito').value = '';
+      modal.show();
+    }
+
+    function guardarFavorito() {
+      const nombre = document.getElementById('nombreFavorito').value.trim();
+
+      if (!nombre) {
+        alert('Por favor, ingresa un nombre para el favorito');
+        return;
+      }
+
+      // Enviar datos al servidor
+      fetch('./viajes_favoritos/guardar_favorito.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: 'nombre=' + encodeURIComponent(nombre) + '&km=' + kmActual + '&min=' + minActual
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            alert('¡Favorito guardado correctamente!');
+            modal.hide();
+          } else {
+            alert('Error al guardar el favorito: ' + data.message);
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Error al guardar el favorito');
+        });
+    }
+
+    window.addEventListener('load', function() {
+      const kmFavorito = sessionStorage.getItem('kmFavorito');
+      const minFavorito = sessionStorage.getItem('minFavorito');
+
+      if (kmFavorito && minFavorito) {
+        document.getElementById('km').value = kmFavorito;
+        document.getElementById('min').value = minFavorito;
+        calcularTarifas();
+        sessionStorage.removeItem('kmFavorito');
+        sessionStorage.removeItem('minFavorito');
+      }
+    });
   </script>
 
 </body>

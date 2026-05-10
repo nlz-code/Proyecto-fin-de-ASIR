@@ -55,8 +55,9 @@ $reservas = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Reservas</title>
     <link href="../bootstrap-5.3.8-dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/admin.css" rel="stylesheet">
 </head>
-<body style="padding-top: 70px;">
+<body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
     <div class="container-fluid">
         <a class="navbar-brand" href="index.php">Mobility Alliance - Admin</a>
@@ -71,6 +72,8 @@ $reservas = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <li class="nav-item"><a class="nav-link" href="usuarios.php">Usuarios</a></li>
                 <li class="nav-item"><a class="nav-link" href="taxistas.php">Taxistas</a></li>
                 <li class="nav-item"><a class="nav-link" href="reservas.php">Reservas</a></li>
+                <li class="nav-item"><a class="nav-link" href="mensajes.php">Mensajes</a></li>
+                <li class="nav-item"><a class="nav-link" href="exportar_pdf.php">Exportar PDF</a></li>
                 <li class="nav-item"><a class="nav-link" href="../login/logout.php">Cerrar sesión</a></li>
             </ul>
         </div>
