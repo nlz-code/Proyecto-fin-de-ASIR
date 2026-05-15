@@ -44,8 +44,6 @@ require_once '../db_pdo.php';
 <div class="container mt-4">
     <h1>Panel de Administración</h1>
     <p>Bienvenido, <?= htmlspecialchars($_SESSION['usuario']) ?></p>
-    <a href="exportar_pdf.php" class="btn btn-success">Exportar todos los datos en PDF</a>
-
     <div class="row mt-5">
         <div class="col-md-3">
             <div class="card text-center">

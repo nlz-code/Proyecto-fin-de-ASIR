@@ -44,6 +44,19 @@ if (!isset($_SESSION['usuario'])) {
     <h1>Bienvenido a </h1>
     <h1>Mobility Alliance</h1>
     <p class="intro-text">¿A dónde quieres viajar hoy?</p>
+    <div class="route-box">
+      <label for="origen">Origen</label>
+      <input type="text" id="origen" placeholder="Ej: Calle Larios, Malaga">
+
+      <label for="destino">Destino</label>
+      <input type="text" id="destino" placeholder="Ej: Aeropuerto de Malaga">
+
+      <button type="button" class="route-button" onclick="calcularRuta()">Calcular ruta</button>
+      <p id="rutaEstado" class="route-status"></p>
+    </div>
+    
+    <button type="button" class="manual-toggle" onclick="mostrarDatosManuales()">Introducir datos manualmente</button>
+    <div id="datosManuales" class="manual-fields">
 
     <label for="km">¿Cuántos kilómetros quieres recorrer?</label>
     <input type="number" id="km" placeholder="Introduce los kilómetros" min="0.01" required>
@@ -52,6 +65,7 @@ if (!isset($_SESSION['usuario'])) {
     <input type="number" id="min" placeholder="Introduce los minutos" min="1" required>
 
     <button onclick="calcularTarifas()">Calcular Tarifas</button>
+    </div>
 
     <!-- Botón estrella para guardar favorito (se muestra después de calcular) -->
     <div id="favoritoContainer" class="favorito-container">
@@ -89,6 +103,72 @@ if (!isset($_SESSION['usuario'])) {
     let minActual = 0;
     const modal = new bootstrap.Modal(document.getElementById('modalFavorito'));
 
+    async function buscarCoordenadas(direccion) {
+      const url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=es&q=' + encodeURIComponent(direccion);
+      const response = await fetch(url, {
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      const data = await response.json();
+
+      if (!data.length) {
+        throw new Error('No se encontro la direccion: ' + direccion);
+      }
+
+      return {
+        lat: parseFloat(data[0].lat),
+        lon: parseFloat(data[0].lon)
+      };
+    }
+
+    async function calcularRuta() {
+      const origen = document.getElementById('origen').value.trim();
+      const destino = document.getElementById('destino').value.trim();
+      const estado = document.getElementById('rutaEstado');
+
+      if (!origen || !destino) {
+        estado.textContent = 'Introduce origen y destino para calcular la ruta.';
+        estado.className = 'route-status route-error';
+        return;
+      }
+
+      estado.textContent = 'Calculando ruta...';
+      estado.className = 'route-status';
+
+      try {
+        const origenCoords = await buscarCoordenadas(origen);
+        const destinoCoords = await buscarCoordenadas(destino);
+        const rutaUrl = `https://router.project-osrm.org/route/v1/driving/${origenCoords.lon},${origenCoords.lat};${destinoCoords.lon},${destinoCoords.lat}?overview=false`;
+        const response = await fetch(rutaUrl);
+        const data = await response.json();
+
+        if (!data.routes || !data.routes.length) {
+          throw new Error('No se pudo calcular una ruta entre esos puntos.');
+        }
+
+        const ruta = data.routes[0];
+        const km = ruta.distance / 1000;
+        const min = Math.ceil(ruta.duration / 60);
+
+        document.getElementById('km').value = km.toFixed(2);
+        document.getElementById('min').value = min;
+        estado.textContent = `Ruta calculada: ${km.toFixed(2)} km y ${min} minutos aprox.`;
+        estado.className = 'route-status route-success';
+        calcularTarifas();
+      } catch (error) {
+        console.error(error);
+        estado.textContent = error.message || 'No se pudo calcular la ruta. Revisa las direcciones.';
+        estado.className = 'route-status route-error';
+      }
+    }
+
+    function mostrarDatosManuales() {
+      const datosManuales = document.getElementById('datosManuales');
+      const visible = datosManuales.style.display === 'block';
+      datosManuales.style.display = visible ? 'none' : 'block';
+    }
+
     function calcularTarifas() {
       const km = parseFloat(document.getElementById('km').value);
       const min = parseInt(document.getElementById('min').value);
@@ -104,14 +184,29 @@ if (!isset($_SESSION['usuario'])) {
       kmActual = km;
       minActual = min;
 
-      const uber = km * 1.2 + min * 0.1;
-      const cabify = km > 20 ? (20 * 1.65 + (km - 20) * 1.1) : (km * 1.65);
-      const bolt = km * 1.3 + min * 0.13;
+      const uber = Math.max(4.5, km * 1.05 + min * 0.22);
+      const cabifyBase = km * 0.75 + min * 0.30;
+      const cabify = Math.max(4.33, cabifyBase * 1.05);
+      const bolt = Math.max(4.0, km * 0.95 + min * 0.18);
 
-      let taxiDia = km <= 12 ? (km * 0.96 + 1.71) : (km * (0.68 * 2));
-      let taxiNoche = km <= 12 ? (km * 1.16 + 2.1) : (km * (0.8 * 2));
-      let taxiAeroDia = km > 12 ? (km * (0.68 * 2) + 6) : null;
-      let taxiAeroNoche = km > 12 ? (km * (0.8 * 2) + 6) : null;
+      let taxiDia = Math.max(4.61, km * 1.05 + 1.88);
+      let taxiNoche = Math.max(5.61, km * 1.25 + 2.27);
+      let taxiFinSemanaNoche = Math.max(6.40, km * 1.43 + 2.59);
+      let taxiAeroDia = Math.max(18.24, km * 1.05 + 1.88 + 6.49);
+      let taxiAeroNoche = Math.max(22.48, km * 1.25 + 2.27 + 6.49);
+
+      res.innerHTML += `<div class="price-notice">Precios orientativos. Uber, Cabify y Bolt pueden cambiar por demanda, trafico, ruta, suplementos o disponibilidad. El taxi se calcula con tarifas urbanas de Malaga 2026, sin incluir todos los posibles suplementos.</div>`;
+      res.innerHTML += `<div class="result"><span>Uber aprox.: ${uber.toFixed(2)} &euro;</span> <a href="https://www.uber.com/es/" target="_blank">Reservar</a></div>`;
+      res.innerHTML += `<div class="result"><span>Cabify aprox.: ${cabify.toFixed(2)} &euro;</span> <a href="https://cabify.com/es" target="_blank">Reservar</a></div>`;
+      res.innerHTML += `<div class="result"><span>Bolt aprox.: ${bolt.toFixed(2)} &euro;</span> <a href="https://bolt.eu/es-es/" target="_blank">Reservar</a></div>`;
+      res.innerHTML += `<div class="result"><span>Taxi tarifa 1 (laborables 06:00-22:00): ${taxiDia.toFixed(2)} &euro;</span><a href="./taxistas/index.php" target="_blank">Contactar</a></div>`;
+      res.innerHTML += `<div class="result"><span>Taxi tarifa 2 (noches, festivos y fines de semana): ${taxiNoche.toFixed(2)} &euro;</span><a href="./taxistas/index.php" target="_blank">Contactar</a></div>`;
+      res.innerHTML += `<div class="result"><span>Taxi tarifa 3 (viernes/festivos noche): ${taxiFinSemanaNoche.toFixed(2)} &euro;</span><a href="./taxistas/index.php" target="_blank">Contactar</a></div>`;
+      res.innerHTML += `<div class="result"><span>Taxi aeropuerto tarifa 1: ${taxiAeroDia.toFixed(2)} &euro;</span><a href="./taxistas/index.php" target="_blank">Contactar</a></div>`;
+      res.innerHTML += `<div class="result"><span>Taxi aeropuerto tarifa 2: ${taxiAeroNoche.toFixed(2)} &euro;</span><a href="./taxistas/index.php" target="_blank">Contactar</a></div>`;
+
+      document.getElementById('favoritoContainer').style.display = 'block';
+      return;
 
       res.innerHTML += `<div class="result"><span>Uber: ${uber.toFixed(2)} €</span> <a href="https://www.uber.com/es/" target="_blank">Reservar</a></div>`;
       res.innerHTML += `<div class="result"><span>Cabify: ${cabify.toFixed(2)} €</span> <a href="https://cabify.com/es" target="_blank">Reservar</a></div>`;
@@ -154,7 +249,7 @@ if (!isset($_SESSION['usuario'])) {
             alert('¡Favorito guardado correctamente!');
             modal.hide();
           } else {
-            alert('Error al guardar el favorito: ' + data.message);
+            alert('Error al guardar el favorito');
           }
         })
         .catch(error => {
@@ -168,6 +263,7 @@ if (!isset($_SESSION['usuario'])) {
       const minFavorito = sessionStorage.getItem('minFavorito');
 
       if (kmFavorito && minFavorito) {
+        document.getElementById('datosManuales').style.display = 'block';
         document.getElementById('km').value = kmFavorito;
         document.getElementById('min').value = minFavorito;
         calcularTarifas();
@@ -180,3 +276,4 @@ if (!isset($_SESSION['usuario'])) {
 </body>
 
 </html>
+

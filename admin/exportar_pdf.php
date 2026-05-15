@@ -161,12 +161,6 @@ $taxistas = $pdo->query("SELECT numero_licencia, nombre, apellidos, telefono, ho
 $reservas = $pdo->query("SELECT id, nombre_usuario, numero_licencia, fecha_reserva, fecha_recogida, hora_recogida, direccion_recogida, estado FROM reservas ORDER BY fecha_recogida DESC, hora_recogida DESC")->fetchAll(PDO::FETCH_ASSOC);
 
 try {
-    $favoritos = $pdo->query("SELECT id, nombre_usuario, nombre, distancia, tiempo, fecha_creacion FROM favoritos ORDER BY fecha_creacion DESC")->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    $favoritos = [];
-}
-
-try {
     $mensajes = $pdo->query("SELECT id, nombre_usuario, opinion, mensaje, fecha_creacion FROM mensajes_contacto ORDER BY fecha_creacion DESC")->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     $mensajes = [];
@@ -180,7 +174,6 @@ $pdf->line('Administrador: ' . $_SESSION['usuario']);
 tabla($pdf, 'Usuarios', ['Usuario', 'Nombre', 'Apellidos', 'Correo', 'Telefono', 'Rol', 'Verificado'], $usuarios, ['nombre_usuario', 'nombre', 'apellidos', 'correo_electronico', 'telefono', 'rol', 'verificado'], [16, 16, 20, 32, 14, 10, 10]);
 tabla($pdf, 'Taxistas', ['Licencia', 'Nombre', 'Apellidos', 'Telefono', 'Horario'], $taxistas, ['numero_licencia', 'nombre', 'apellidos', 'telefono', 'horario'], [14, 18, 26, 16, 16]);
 tabla($pdf, 'Reservas', ['ID', 'Usuario', 'Licencia', 'Fecha', 'Hora', 'Direccion', 'Estado'], $reservas, ['id', 'nombre_usuario', 'numero_licencia', 'fecha_recogida', 'hora_recogida', 'direccion_recogida', 'estado'], [5, 16, 12, 12, 10, 44, 12]);
-tabla($pdf, 'Viajes favoritos', ['ID', 'Usuario', 'Nombre', 'Km', 'Min', 'Fecha'], $favoritos, ['id', 'nombre_usuario', 'nombre', 'distancia', 'tiempo', 'fecha_creacion'], [5, 16, 32, 10, 8, 20]);
 tabla($pdf, 'Mensajes de contacto', ['ID', 'Usuario', 'Opinion', 'Mensaje', 'Fecha'], $mensajes, ['id', 'nombre_usuario', 'opinion', 'mensaje', 'fecha_creacion'], [5, 16, 14, 58, 20]);
 
 $pdfContent = $pdf->output();

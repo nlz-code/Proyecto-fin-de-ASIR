@@ -70,13 +70,24 @@ h1 {
     color: red;
 }
 
+.price-notice {
+    background-color: #fff3cd;
+    border: 1px solid #ffecb5;
+    border-radius: 5px;
+    color: #664d03;
+    font-size: 14px;
+    margin: 16px 0 10px;
+    padding: 10px;
+}
+
 label {
     display: block;
     margin-bottom: 10px;
     font-weight: bold;
 }
 
-input[type="number"] {
+input[type="number"],
+input[type="text"] {
     width: 100%;
     padding: 10px;
     margin-bottom: 20px;
@@ -128,6 +139,43 @@ button {
 
 button:hover {
     background-color: #2980b9;
+}
+
+.route-box {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    margin: 16px 0;
+    padding: 14px;
+}
+
+.route-button {
+    margin-bottom: 8px;
+}
+
+.route-status {
+    font-size: 14px;
+    margin: 4px 0 0;
+}
+
+.manual-toggle {
+    background-color: #6c757d;
+    margin-bottom: 14px;
+}
+
+.manual-toggle:hover {
+    background-color: #5c636a;
+}
+
+.manual-fields {
+    display: none;
+}
+
+.route-success {
+    color: #198754;
+}
+
+.route-error {
+    color: #dc3545;
 }
 
 @media (max-width: 576px) {
