@@ -8,6 +8,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['rol'] !== 'admin') {
 }
 
 require_once '../db_pdo.php';
+require_once '../includes/validaciones_usuario.php';
 
 // Procesar eliminación
 if (isset($_GET['eliminar'])) {
@@ -33,6 +34,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $domicilio = trim($_POST['domicilio'] ?? '');
     $clave = $_POST['clave'] ?? '';
     $accion = $_POST['accion'] ?? '';
+    $validacion = validar_usuario_formulario($_POST, $accion === 'crear');
+
+    if (!empty($validacion['errores'])) {
+        $_SESSION['error'] = implode(' ', $validacion['errores']);
+        header('Location: usuarios.php');
+        exit;
+    }
 
     if ($nombre_usuario && $nombre && $correo_electronico) {
         try {
@@ -175,39 +183,39 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Nombre de usuario</label>
-                        <input type="text" class="form-control" name="nombre_usuario" value="<?= $usuario_editar ? htmlspecialchars($usuario_editar['nombre_usuario']) : '' ?>" <?= $usuario_editar ? 'readonly' : 'required' ?>>
+                        <input type="text" class="form-control" name="nombre_usuario" value="<?= $usuario_editar ? htmlspecialchars($usuario_editar['nombre_usuario']) : '' ?>" maxlength="50" pattern="[A-Za-z0-9_]{3,50}" <?= $usuario_editar ? 'readonly' : 'required' ?>>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Nombre</label>
-                        <input type="text" class="form-control" name="nombre" value="<?= $usuario_editar ? htmlspecialchars($usuario_editar['nombre']) : '' ?>" required>
+                        <input type="text" class="form-control" name="nombre" value="<?= $usuario_editar ? htmlspecialchars($usuario_editar['nombre']) : '' ?>" maxlength="10" required>
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Apellidos</label>
-                        <input type="text" class="form-control" name="apellidos" value="<?= $usuario_editar ? htmlspecialchars($usuario_editar['apellidos']) : '' ?>">
+                        <input type="text" class="form-control" name="apellidos" value="<?= $usuario_editar ? htmlspecialchars($usuario_editar['apellidos']) : '' ?>" maxlength="100">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Correo electrónico</label>
-                        <input type="email" class="form-control" name="correo_electronico" value="<?= $usuario_editar ? htmlspecialchars($usuario_editar['correo_electronico']) : '' ?>" required>
+                        <input type="email" class="form-control" name="correo_electronico" value="<?= $usuario_editar ? htmlspecialchars($usuario_editar['correo_electronico']) : '' ?>" maxlength="150" required>
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Teléfono</label>
-                        <input type="tel" class="form-control" name="telefono" value="<?= $usuario_editar ? htmlspecialchars($usuario_editar['telefono']) : '' ?>">
+                        <input type="tel" class="form-control" name="telefono" value="<?= $usuario_editar ? htmlspecialchars($usuario_editar['telefono']) : '' ?>" maxlength="9" pattern="[0-9]{9}">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Domicilio</label>
-                        <input type="text" class="form-control" name="domicilio" value="<?= $usuario_editar ? htmlspecialchars($usuario_editar['domicilio']) : '' ?>">
+                        <input type="text" class="form-control" name="domicilio" value="<?= $usuario_editar ? htmlspecialchars($usuario_editar['domicilio']) : '' ?>" maxlength="255">
                     </div>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Contraseña <?= !$usuario_editar ? '(requerida)' : '(dejar en blanco para no cambiar)' ?></label>
-                    <input type="password" class="form-control" name="clave" <?= !$usuario_editar ? 'required' : '' ?>>
+                    <input type="password" class="form-control" name="clave" minlength="6" maxlength="72" <?= !$usuario_editar ? 'required' : '' ?>>
                 </div>
 
                 <button type="submit" class="btn btn-primary"><?= $usuario_editar ? 'Actualizar' : 'Crear' ?></button>

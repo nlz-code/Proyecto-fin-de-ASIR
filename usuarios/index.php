@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once '../db_pdo.php';
+require_once '../includes/validaciones_usuario.php';
 
 if (isset($_SESSION['usuario'])) {
     header('Location: ../principal/index.php');
@@ -9,19 +10,13 @@ if (isset($_SESSION['usuario'])) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $clave = $_POST['clave'] ?? '';
-    $usuario = [
-        'nombre_usuario' => trim($_POST['nombre_usuario'] ?? ''),
-        'nombre' => trim($_POST['nombre'] ?? ''),
-        'apellidos' => trim($_POST['apellidos'] ?? ''),
-        'domicilio' => trim($_POST['domicilio'] ?? ''),
-        'telefono' => trim($_POST['telefono'] ?? ''),
-        'correo_electronico' => trim($_POST['correo_electronico'] ?? ''),
-        'clave' => password_hash($clave, PASSWORD_DEFAULT),
-    ];
+    $validacion = validar_usuario_formulario($_POST, true);
+    $usuario = $validacion['datos'];
+    $usuario['clave'] = password_hash($clave, PASSWORD_DEFAULT);
 
     try {
-        if (!$usuario['nombre_usuario'] || !$usuario['nombre'] || !$usuario['correo_electronico'] || !$clave) {
-            $_SESSION['error'] = 'Completa todos los campos obligatorios';
+        if (!empty($validacion['errores'])) {
+            $_SESSION['error'] = implode(' ', $validacion['errores']);
             header('Location: index.php');
             exit;
         }
@@ -76,13 +71,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
 
     <form method="post">
-        <input name="nombre_usuario" class="form-control mb-2" placeholder="Nombre de usuario" required>
-        <input name="nombre" class="form-control mb-2" placeholder="Nombre" required>
-        <input name="apellidos" class="form-control mb-2" placeholder="Apellidos" required>
-        <input name="domicilio" class="form-control mb-2" placeholder="Domicilio" required>
-        <input name="telefono" class="form-control mb-2" placeholder="Telefono" required>
-        <input name="correo_electronico" type="email" class="form-control mb-2" placeholder="Correo electronico" required>
-        <input name="clave" type="password" class="form-control mb-2" placeholder="Contrasena" required>
+        <input name="nombre_usuario" class="form-control mb-2" placeholder="Nombre de usuario" maxlength="50" pattern="[A-Za-z0-9_]{3,50}" required>
+        <input name="nombre" class="form-control mb-2" placeholder="Nombre" maxlength="10" required>
+        <input name="apellidos" class="form-control mb-2" placeholder="Apellidos" maxlength="100">
+        <input name="domicilio" class="form-control mb-2" placeholder="Domicilio" maxlength="255">
+        <input name="telefono" class="form-control mb-2" placeholder="Telefono" maxlength="9" pattern="[0-9]{9}">
+        <input name="correo_electronico" type="email" class="form-control mb-2" placeholder="Correo electronico" maxlength="150" required>
+        <input name="clave" type="password" class="form-control mb-2" placeholder="Contrasena" minlength="6" maxlength="72" required>
         <button type="submit" class="btn btn-primary">Registrarse</button>
         <a href="../index.php" class="btn btn-secondary">Volver</a>
     </form>

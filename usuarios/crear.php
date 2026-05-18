@@ -7,22 +7,17 @@ if (isset($_SESSION['usuario'])) {
 }
 
 require_once '../db_pdo.php';
+require_once '../includes/validaciones_usuario.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $clave = $_POST['clave'] ?? '';
-    $usuario = [
-        'nombre_usuario' => trim($_POST['nombre_usuario'] ?? ''),
-        'nombre' => trim($_POST['nombre'] ?? ''),
-        'apellidos' => trim($_POST['apellidos'] ?? ''),
-        'domicilio' => trim($_POST['domicilio'] ?? ''),
-        'correo_electronico' => trim($_POST['correo_electronico'] ?? ''),
-        'telefono' => trim($_POST['telefono'] ?? ''),
-        'clave' => password_hash($clave, PASSWORD_DEFAULT),
-    ];
+    $validacion = validar_usuario_formulario($_POST, true);
+    $usuario = $validacion['datos'];
+    $usuario['clave'] = password_hash($clave, PASSWORD_DEFAULT);
 
     try {
-        if (!$usuario['nombre_usuario'] || !$usuario['nombre'] || !$usuario['correo_electronico'] || !$clave) {
-            $_SESSION['error'] = 'Completa todos los campos obligatorios';
+        if (!empty($validacion['errores'])) {
+            $_SESSION['error'] = implode(' ', $validacion['errores']);
             header('Location: index.php');
             exit;
         }

@@ -156,7 +156,7 @@ function tabla(PdfReporte $pdf, string $titulo, array $cabeceras, array $filas, 
     }
 }
 
-$usuarios = $pdo->query("SELECT nombre_usuario, nombre, apellidos, correo_electronico, telefono, domicilio, rol, verificado FROM usuarios ORDER BY nombre_usuario ASC")->fetchAll(PDO::FETCH_ASSOC);
+$usuarios = $pdo->query("SELECT nombre_usuario, nombre, apellidos, correo_electronico, telefono, domicilio, rol FROM usuarios ORDER BY nombre_usuario ASC")->fetchAll(PDO::FETCH_ASSOC);
 $taxistas = $pdo->query("SELECT numero_licencia, nombre, apellidos, telefono, horario FROM taxistas ORDER BY nombre ASC")->fetchAll(PDO::FETCH_ASSOC);
 $reservas = $pdo->query("SELECT id, nombre_usuario, numero_licencia, fecha_reserva, fecha_recogida, hora_recogida, direccion_recogida, estado FROM reservas ORDER BY fecha_recogida DESC, hora_recogida DESC")->fetchAll(PDO::FETCH_ASSOC);
 
@@ -171,7 +171,7 @@ $pdf->title('Mobility Alliance - Exportacion de datos');
 $pdf->line('Generado: ' . date('d/m/Y H:i'));
 $pdf->line('Administrador: ' . $_SESSION['usuario']);
 
-tabla($pdf, 'Usuarios', ['Usuario', 'Nombre', 'Apellidos', 'Correo', 'Telefono', 'Rol', 'Verificado'], $usuarios, ['nombre_usuario', 'nombre', 'apellidos', 'correo_electronico', 'telefono', 'rol', 'verificado'], [16, 16, 20, 32, 14, 10, 10]);
+tabla($pdf, 'Usuarios', ['Usuario', 'Nombre', 'Apellidos', 'Correo', 'Telefono', 'Rol'], $usuarios, ['nombre_usuario', 'nombre', 'apellidos', 'correo_electronico', 'telefono', 'rol'], [16, 16, 20, 36, 14, 10]);
 tabla($pdf, 'Taxistas', ['Licencia', 'Nombre', 'Apellidos', 'Telefono', 'Horario'], $taxistas, ['numero_licencia', 'nombre', 'apellidos', 'telefono', 'horario'], [14, 18, 26, 16, 16]);
 tabla($pdf, 'Reservas', ['ID', 'Usuario', 'Licencia', 'Fecha', 'Hora', 'Direccion', 'Estado'], $reservas, ['id', 'nombre_usuario', 'numero_licencia', 'fecha_recogida', 'hora_recogida', 'direccion_recogida', 'estado'], [5, 16, 12, 12, 10, 44, 12]);
 tabla($pdf, 'Mensajes de contacto', ['ID', 'Usuario', 'Opinion', 'Mensaje', 'Fecha'], $mensajes, ['id', 'nombre_usuario', 'opinion', 'mensaje', 'fecha_creacion'], [5, 16, 14, 58, 20]);
