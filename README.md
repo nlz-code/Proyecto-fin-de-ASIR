@@ -134,4 +134,4 @@ El archivo `proyecto_db.sql` incluye la estructura necesaria y datos de ejemplo 
 
 ## Autor
 
-Proyecto final de ASIR.
+Noelia López Zayas
