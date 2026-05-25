@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 12-05-2026 a las 15:53:32
+-- Tiempo de generación: 24-05-2026 a las 16:02:58
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -41,8 +41,7 @@ CREATE TABLE `favoritos` (
 --
 
 INSERT INTO `favoritos` (`id`, `nombre_usuario`, `nombre`, `distancia`, `tiempo`, `fecha_creacion`) VALUES
-(2, 'nlopzay2502', 'Casa de mi novio', 9.86, 13, '2026-05-10 17:48:02'),
-(3, 'test', 'test', 1.00, 1, '2026-05-11 19:09:37');
+(2, 'nlopzay2502', 'Casa de mi novio', 9.86, 13, '2026-05-10 17:48:02');
 
 -- --------------------------------------------------------
 
@@ -64,7 +63,13 @@ CREATE TABLE `mensajes_contacto` (
 
 INSERT INTO `mensajes_contacto` (`id`, `nombre_usuario`, `opinion`, `mensaje`, `fecha_creacion`) VALUES
 (2, 'nlopzay2502', 'me_gusta', 'Me encanta es perfecta', '2026-05-10 18:22:51'),
-(3, 'DAYVA', 'me_gusta', 'es buena para buscar rápido.', '2026-05-10 19:56:54');
+(3, 'DAYVA', 'me_gusta', 'es buena para buscar rápido.', '2026-05-10 19:56:54'),
+(4, 'nlopzay2502', 'me_gusta', 'Es muy intuitiva y fácil de manejar', '2026-05-21 19:24:15'),
+(5, 'nlopzay2502', 'me_gusta', 'muy buena', '2026-05-21 19:31:49'),
+(6, 'nlopzay2502', 'me_gusta', 'we', '2026-05-21 19:31:55'),
+(7, 'nlopzay2502', 'me_gusta', 'we', '2026-05-21 19:31:58'),
+(8, 'nlopzay2502', 'me_gusta', 'we', '2026-05-21 19:32:01'),
+(9, 'nlopzay2502', 'me_gusta', 'we', '2026-05-21 19:32:05');
 
 -- --------------------------------------------------------
 
@@ -88,8 +93,11 @@ CREATE TABLE `reservas` (
 --
 
 INSERT INTO `reservas` (`id`, `nombre_usuario`, `numero_licencia`, `fecha_reserva`, `fecha_recogida`, `hora_recogida`, `direccion_recogida`, `estado`) VALUES
-(2, 'nlopzay2502', 'TAX010', '2026-04-12 15:29:54', '2026-04-13', '09:00:00', 'Calle San José, 2, torre del mar', 'confirmada'),
-(3, 'nlopzay2502', 'TAX043', '2026-05-10 21:57:52', '2026-05-12', '10:00:00', 'Calle Escribano 39, Benajarafe, Málaga', 'completada');
+(2, 'nlopzay2502', 'TAX010', '2026-04-12 15:29:54', '2026-04-13', '09:00:00', 'Calle San José, 2, torre del mar', 'completada'),
+(3, 'nlopzay2502', 'TAX043', '2026-05-10 21:57:52', '2026-05-12', '10:00:00', 'Calle Escribano 39, Benajarafe, Málaga', 'completada'),
+(5, 'nlopzay2502', 'TAX017', '2026-05-15 15:31:58', '2026-05-20', '07:00:00', 'Calle San José 2 29740 Torre del Mar', 'completada'),
+(6, 'nlopzay2502', 'TAX005', '2026-05-21 19:41:13', '2026-05-21', '23:00:00', 'Calle hipeta, 32', 'pendiente'),
+(7, 'nlopzay2502', 'TAX025', '2026-05-21 19:41:14', '2026-05-21', '12:45:00', 'Calle San Juan, 2', 'pendiente');
 
 -- --------------------------------------------------------
 
@@ -169,14 +177,12 @@ INSERT INTO `taxistas` (`numero_licencia`, `nombre`, `apellidos`, `telefono`, `h
 
 CREATE TABLE `usuarios` (
   `nombre_usuario` varchar(50) NOT NULL,
-  `nombre` varchar(100) NOT NULL,
-  `apellidos` varchar(150) DEFAULT NULL,
+  `nombre` char(10) NOT NULL,
+  `apellidos` char(100) DEFAULT NULL,
   `domicilio` varchar(255) DEFAULT NULL,
-  `telefono` varchar(20) DEFAULT NULL,
+  `telefono` int(9) DEFAULT NULL,
   `correo_electronico` varchar(150) NOT NULL,
   `clave` varchar(255) NOT NULL,
-  `verificado` tinyint(1) DEFAULT 0,
-  `token_verificacion` varchar(255) DEFAULT NULL,
   `rol` enum('usuario','admin') DEFAULT 'usuario'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -184,13 +190,13 @@ CREATE TABLE `usuarios` (
 -- Volcado de datos para la tabla `usuarios`
 --
 
-INSERT INTO `usuarios` (`nombre_usuario`, `nombre`, `apellidos`, `domicilio`, `telefono`, `correo_electronico`, `clave`, `verificado`, `token_verificacion`, `rol`) VALUES
-('admin', 'Administrador', 'Sistema', NULL, NULL, 'admin@example.com', '$2y$10$nuFj/BnMFDT5XDW7GLHTn.i2K4LiqLv/awPdDUNj.db0R4yFh6n6a', 1, NULL, 'admin'),
-('DAYVA', 'ANA VANESA', 'ZAYAS LOPEZ', 'C/ SAN JOSE Nº2 1º B', '664659869', 'vanesa0104@gmail.com', '$2y$10$P4Lek20LKViIGhNWEIkRDevuKiu.WH0Znx3HZniDF.cF809S5FKcW', 0, NULL, 'usuario'),
-('ElTrabucazo32', 'ElTrabucazo', '32', 'C/Villapolla 51', '666666666', 'eltrabucazo32@gmail.com', '$2y$10$9Q/GQ5/gihaEJ4TWO.TlX.5jfNxdXj8WLgnoibI6AJhhpK06l3kTW', 0, NULL, 'usuario'),
-('juanmorales_25', 'Juan', 'Morales Castro', 'calle hipeta, 38', '642137600', 'juanmorales@example.com', '$2y$10$CvQY9Pa2PXc0XFItj/N1CeQ4uSnGJB2zM1LOQP41nMuYe/uyW9E9S', 0, NULL, 'usuario'),
-('nlopzay2502', 'Noelia', 'López', 'Calle San José, nº2, 1ºB', '654781239', 'noelialz2502@gmail.com', '$2y$10$IApgg.FhpmW/dX4lflGcge/5vuX0RWckJBsG4mAXM3hME1kogWK.S', 0, NULL, 'usuario'),
-('test', 'test', 'testtest', 'test', 'testtest', 'test', '$2y$10$TUKjRl9EiTkTuT6RFLSN.ulvWwLecjs9/2scbmTbE8asN6h6qnHS2', 0, NULL, 'usuario');
+INSERT INTO `usuarios` (`nombre_usuario`, `nombre`, `apellidos`, `domicilio`, `telefono`, `correo_electronico`, `clave`, `rol`) VALUES
+('admin', 'Administra', 'Sistema', NULL, NULL, 'admin@example.com', '$2y$10$nuFj/BnMFDT5XDW7GLHTn.i2K4LiqLv/awPdDUNj.db0R4yFh6n6a', 'admin'),
+('DAYVA', 'ANA VANESA', 'ZAYAS LOPEZ', 'C/ SAN JOSE Nº2 1º B', 664659869, 'vanesa0104@gmail.com', '$2y$10$P4Lek20LKViIGhNWEIkRDevuKiu.WH0Znx3HZniDF.cF809S5FKcW', 'usuario'),
+('ElTrabucazo32', 'ElTrabucaz', '32', 'C/Villapolla 51', 666666666, 'eltrabucazo32@gmail.com', '$2y$10$9Q/GQ5/gihaEJ4TWO.TlX.5jfNxdXj8WLgnoibI6AJhhpK06l3kTW', 'usuario'),
+('juanmorales_25', 'Juan', 'Morales Castro', 'calle hipeta, 38', 642137600, 'juanmorales@example.com', '$2y$10$CvQY9Pa2PXc0XFItj/N1CeQ4uSnGJB2zM1LOQP41nMuYe/uyW9E9S', 'usuario'),
+('nlopzay2502', 'Noelia', 'López', 'Calle San José, nº2, 1ºB', 642137600, 'noelialz2502@gmail.com', '$2y$10$IApgg.FhpmW/dX4lflGcge/5vuX0RWckJBsG4mAXM3hME1kogWK.S', 'usuario'),
+('noelialz2502', 'Noelia', 'López Zayas', 'Calle San José, 2, 1ºB', 123456789, 'nlopzay2502@g.educaand.es', '$2y$10$E79iJpw5Lbqr0O2pWG.JYOs0s5jYN/7rbdw0D7xdK3JECunJQLqxi', 'usuario');
 
 --
 -- Índices para tablas volcadas
@@ -247,13 +253,13 @@ ALTER TABLE `favoritos`
 -- AUTO_INCREMENT de la tabla `mensajes_contacto`
 --
 ALTER TABLE `mensajes_contacto`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `reservas`
 --
 ALTER TABLE `reservas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Restricciones para tablas volcadas

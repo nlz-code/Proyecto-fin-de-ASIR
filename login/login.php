@@ -15,6 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($nombre_usuario && $clave) {
         try {
+            //Busca si existe el usuario en la base de datos
             $sql = "SELECT * FROM usuarios WHERE nombre_usuario = :nombre_usuario LIMIT 1";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([':nombre_usuario' => $nombre_usuario]);
